@@ -19,9 +19,11 @@ const students = ['Jimmy', 'Timothy', 'Jimothy']
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/index.html'))
+    rollbar.info("HTML served successfully");
 })
 
 app.get('/api/students', (req, res) => {
+    rollbar.info("Someone got the list of students on page load");
     res.status(200).send(students)
 })
 
@@ -35,10 +37,13 @@ app.post('/api/students', (req, res) => {
    try {
        if (index === -1 && name !== '') {
            students.push(name)
+           rollbar.log("Student added successfully", {author: "Jeddy", type: "manual entry"});
            res.status(200).send(students)
        } else if (name === ''){
+           rollbar.error("No name provided");
            res.status(400).send('You must enter a name.')
        } else {
+           rollbar.error("STudent already exists");
            res.status(400).send('That student already exists.')
        }
    } catch (err) {
